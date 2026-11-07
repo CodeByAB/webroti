@@ -40,7 +40,7 @@ Repository metadata and settings aren't stored in git, so they are listed here. 
 
 **Settings → Advanced Security:** private vulnerability reporting on (SECURITY.md links to it), Dependabot alerts and security updates on, secret scanning and push protection on. Leave CodeQL _default setup_ off — `codeql.yml` is the advanced setup.
 
-**Branches / tags:** delete stale branches that predate the rewrite (`develop`, `clojure`, `feature/Issue#10`, `gh-pages`) and the old tag `DeployToHerokuNowWorks`. Releases from v2.0.0 on are tagged `v<version>` by release-please.
+**Branches / tags:** only `main` and work branches. Delete the pre-rewrite branches (`develop`, `clojure`, `feature/Issue#10`, `gh-pages`) and the tag `DeployToHerokuNowWorks`: they hold only 2013 code that the rewrite replaces (checked 2026-11-07; the one idea worth keeping, a meeting name, is in ROADMAP.md). `git push origin --delete develop clojure 'feature/Issue#10' gh-pages refs/tags/DeployToHerokuNowWorks` Releases from v2.0.0 on are tagged `v<version>` by release-please.
 
 ## New migrations
 

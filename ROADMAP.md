@@ -8,7 +8,7 @@ Project status and next steps, kept in the repo so it is visible from any machin
 
 **Next:**
 
-1. Review and merge the branch into `master`, then rename `master` to `main` (GitHub → _Settings → Branches_; old links redirect). Workflows, release-please and Dependabot target `main`. Delete the stale `develop`, `clojure`, `feature/Issue#10` and `gh-pages` branches if no longer needed.
+1. Review and merge the branch into `master`, then rename `master` to `main` (GitHub → _Settings → Branches_; old links redirect). Workflows, release-please and Dependabot target `main`. Delete the stale branches and tag — checked, nothing in them is needed (command in docs/deploy.md).
 2. Cloudflare setup per [docs/deploy.md](docs/deploy.md): D1 database, `database_id` in `wrangler.toml`, Pages project, API token and GitHub secrets.
 3. Decide the domain (open question below).
 4. GitHub repository settings per [docs/deploy.md § GitHub repository settings](docs/deploy.md#github-repository-settings): description, website, topics, default branch, merge and Actions settings, security features, stale branches and tag.
@@ -59,6 +59,7 @@ Project status and next steps, kept in the repo so it is visible from any machin
 
 ## Ideas (not started)
 
+- Optional meeting name, shown on the meeting and vote pages (first tried in 2013 on the deleted `feature/Issue#10` branch).
 - Vote distribution as a bar chart on the meeting page.
 - Let the meeting's creator close voting.
 - Swedish translation.
