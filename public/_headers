@@ -1,0 +1,16 @@
+# Cloudflare Pages response headers for static files. They do NOT apply to
+# Pages Functions (/api/*): those get theirs in functions/api/_middleware.js.
+/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; manifest-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), geolocation=(), microphone=(), interest-cohort=()
+  Strict-Transport-Security: max-age=31536000
+
+# Preview deployments (<branch>.webroti.pages.dev) and the bare pages.dev
+# address should never end up in search results.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex

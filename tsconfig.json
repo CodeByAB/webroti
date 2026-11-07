@@ -1,0 +1,19 @@
+{
+  // Type-checks the server-side JavaScript (JSDoc types, `// @ts-check`) against
+  // the Cloudflare Workers runtime. Nothing is compiled: code runs as written.
+  // The browser code has its own config in public/js/tsconfig.json, because the
+  // Workers and DOM type libraries can't be loaded together.
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "strict": true,
+    "target": "es2023",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["es2023"],
+    "types": ["@cloudflare/workers-types"],
+    "skipLibCheck": true
+  },
+  "include": ["functions", "lib"]
+}

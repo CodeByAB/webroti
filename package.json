@@ -1,0 +1,29 @@
+{
+  "name": "webroti",
+  "private": true,
+  "description": "Web-ROTI — measure the Return On Time Invested in your meetings",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "npm run db:migrate:local && wrangler pages dev",
+    "db:migrate:local": "wrangler d1 migrations apply webroti --local",
+    "db:migrate:remote": "wrangler d1 migrations apply webroti --remote",
+    "test": "node --test --disable-warning=ExperimentalWarning",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "typecheck": "tsc -p . && tsc -p public/js",
+    "check": "npm run lint && npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20261107.1",
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.20.5",
+    "eslint": "10.14.0",
+    "globals": "17.14.0",
+    "prettier": "3.9.10",
+    "typescript": "7.0.2",
+    "wrangler": "4.158.0"
+  }
+}
