@@ -8,7 +8,7 @@ Project status and next steps, kept in the repo so it is visible from any machin
 
 **Next:**
 
-1. Review and merge the branch into `main`.
+1. Review and merge the branch into `master`, then rename `master` to `main` (GitHub → _Settings → Branches_; old links redirect). Workflows, release-please and Dependabot target `main`. Delete the stale `develop`, `clojure`, `feature/Issue#10` and `gh-pages` branches if no longer needed.
 2. Cloudflare setup per [docs/deploy.md](docs/deploy.md): D1 database, `database_id` in `wrangler.toml`, Pages project, API token and GitHub secrets.
 3. Decide the domain (open question below).
 4. Branch protection on `main` (require Verify, squash merge).
