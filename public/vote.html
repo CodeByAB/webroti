@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Vote – Web-ROTI</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <script type="module" src="/js/vote.js"></script>
+  </head>
+  <body>
+    <main class="card">
+      <h1 class="title">Vote <span class="code" id="meeting-id"></span></h1>
+
+      <p class="status status--error" id="error" role="alert" hidden></p>
+
+      <form id="vote-form" hidden>
+        <label class="visually-hidden" for="vote-slider">Your ROTI, from 1 to 5</label>
+        <output class="vote-value" id="vote-value" for="vote-slider">3.0</output>
+        <input class="slider" id="vote-slider" type="range" min="1" max="5" step="0.1" value="3" />
+        <button type="submit" class="button button--primary" id="vote-button">Vote</button>
+        <p class="status status--success" id="confirmation" role="status" aria-live="polite"></p>
+      </form>
+
+      <ol class="scale" reversed>
+        <li>Superb, I could not have used this time better</li>
+        <li>Positive</li>
+        <li>Break even, my gain is equal to the time spent</li>
+        <li>Not so good</li>
+        <li>A complete waste of time</li>
+      </ol>
+
+      <p><a id="results-link" href="/meeting">Back to the meeting results</a></p>
+    </main>
+  </body>
+</html>

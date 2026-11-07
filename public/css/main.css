@@ -1,0 +1,292 @@
+/*
+ * Web-ROTI stylesheet. One file, no framework, no build step.
+ * Design tokens are the custom properties in :root — use them instead of
+ * hard-coded values. See docs/design.md.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --color-bg: #f3f5f4;
+  --color-surface: #ffffff;
+  --color-text: #1d2422;
+  --color-muted: #5b6662;
+  --color-border: #d5dcd9;
+  --color-primary: #1f6f5c;
+  --color-primary-hover: #185a4a;
+  --color-on-primary: #ffffff;
+  --color-error: #b3261e;
+  --color-success: #1f6f5c;
+  --color-track: #e3e8e6;
+
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --radius: 0.75rem;
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.5rem;
+  --tap-size: 3rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #121715;
+    --color-surface: #1b2220;
+    --color-text: #e6ecea;
+    --color-muted: #a3b0ab;
+    --color-border: #33403c;
+    --color-primary: #4fb79a;
+    --color-primary-hover: #6fcbb0;
+    --color-on-primary: #0d1311;
+    --color-error: #ff8a80;
+    --color-success: #6fcbb0;
+    --color-track: #2b3532;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: var(--space-2);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: 1rem/1.5 var(--font-body);
+}
+
+a {
+  color: var(--color-primary);
+}
+
+h2 {
+  margin-top: var(--space-4);
+  font-size: 1.15rem;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ---- Layout ---- */
+
+.card {
+  max-width: 40rem;
+  margin: var(--space-4) auto;
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.title {
+  margin-top: 0;
+  text-align: center;
+  font-size: clamp(1.75rem, 6vw, 2.5rem);
+}
+
+.lead {
+  font-size: 1.125rem;
+}
+
+.code {
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
+
+.hint,
+.credits {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.credits {
+  margin-top: var(--space-4);
+}
+
+/* ---- Buttons ---- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-size);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--color-primary);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button--primary {
+  width: 100%;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 1.125rem;
+}
+
+.button--primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.button--small {
+  min-height: 2.25rem;
+  padding: 0 var(--space-2);
+  font-size: 0.875rem;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* ---- Status messages ---- */
+
+.status {
+  min-height: 1.5em;
+  margin: var(--space-1) 0;
+  text-align: center;
+  font-weight: 600;
+}
+
+.status--success {
+  color: var(--color-success);
+}
+
+.status--error {
+  color: var(--color-error);
+}
+
+/* ---- Join with code (start page) ---- */
+
+.join {
+  margin-top: var(--space-3);
+}
+
+.join label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-weight: 600;
+}
+
+.join__row {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.join input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tap-size);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: 1.25rem var(--font-mono);
+  letter-spacing: 0.1em;
+}
+
+/* ---- Meeting results ---- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-1);
+  margin: var(--space-3) 0;
+}
+
+.stats__item {
+  padding: var(--space-2) var(--space-1);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  text-align: center;
+}
+
+.stats dt {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.stats dd {
+  margin: 0;
+  font-size: clamp(1.25rem, 5.5vw, 2.5rem);
+  white-space: nowrap;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.qr {
+  width: min(12rem, 60vw);
+  margin: var(--space-2) auto;
+}
+
+.qr svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  overflow-wrap: anywhere;
+}
+
+/* ---- Voting ---- */
+
+#vote-form {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.vote-value {
+  display: block;
+  text-align: center;
+  font-size: 5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.slider {
+  width: 100%;
+  height: var(--tap-size);
+  margin: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.scale {
+  margin-top: var(--space-3);
+  color: var(--color-muted);
+}
+
+/* ---- Utilities ---- */
+
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

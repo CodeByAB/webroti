@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Meeting results – Web-ROTI</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <script type="module" src="/js/meeting.js"></script>
+  </head>
+  <body>
+    <main class="card">
+      <h1 class="title">Meeting <span class="code" id="meeting-id">–</span></h1>
+
+      <p class="status status--error" id="error" role="alert" hidden></p>
+
+      <div id="meeting" hidden>
+        <dl class="stats" aria-live="polite">
+          <div class="stats__item">
+            <dt>Votes</dt>
+            <dd id="vote-count">0</dd>
+          </div>
+          <div class="stats__item">
+            <dt>Average ROTI</dt>
+            <dd id="average">–</dd>
+          </div>
+          <div class="stats__item">
+            <dt>Min–max</dt>
+            <dd id="min-max">–</dd>
+          </div>
+        </dl>
+
+        <p><a class="button button--primary" id="vote-link" href="/vote">Vote</a></p>
+
+        <h2>Let others vote</h2>
+        <p>Scan the QR code or share the direct link to the voting page:</p>
+        <div class="qr" id="qr-code" role="img" aria-label="QR code for the voting page"></div>
+        <p class="share">
+          <a id="vote-url" href="/vote"></a>
+          <button type="button" class="button button--small" id="copy-link">Copy link</button>
+        </p>
+        <p class="hint">
+          The results update automatically. Bookmark this page to come back to the result later — meetings are kept for
+          90 days after the last activity.
+        </p>
+      </div>
+
+      <p><a href="/">Create new meeting</a></p>
+    </main>
+  </body>
+</html>

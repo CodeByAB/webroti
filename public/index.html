@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Web-ROTI – measure the return on time invested in your meetings</title>
+    <meta
+      name="description"
+      content="Web-ROTI lets everyone in a meeting rate it anonymously from 1 to 5 and shows the average."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <script type="module" src="/js/start.js"></script>
+  </head>
+  <body>
+    <main class="card">
+      <h1 class="title">Web-ROTI</h1>
+      <p class="lead">
+        Web-ROTI (Return On Time Invested) is a tool to gauge the quality of meetings and improve them.
+      </p>
+
+      <p>
+        <button type="button" class="button button--primary" id="create-meeting">Create new meeting</button>
+      </p>
+      <p class="status" id="create-status" role="status" aria-live="polite"></p>
+
+      <form class="join" id="join-form" action="/vote" method="get">
+        <label for="join-code">Got a meeting code?</label>
+        <div class="join__row">
+          <input
+            id="join-code"
+            name="id"
+            inputmode="numeric"
+            autocomplete="off"
+            pattern="[1-9][0-9]{5}"
+            maxlength="6"
+            placeholder="123456"
+            required
+          />
+          <button type="submit" class="button">Vote</button>
+        </div>
+      </form>
+
+      <h2>It is super easy to get started</h2>
+      <ol>
+        <li>Create a new meeting</li>
+        <li>Let everyone vote by passing a phone around, through the direct link or the QR code</li>
+        <li>Check out the result</li>
+      </ol>
+
+      <p>
+        ROTI can easily be measured on a whiteboard or paper, but you run the risk of getting a biased result when the
+        voters see other votes. In Web-ROTI every vote is given without bias, and as a bonus it calculates the average
+        as well.
+      </p>
+
+      <footer class="credits">
+        Originally created at Diversify by Kristoffer Richardsson, Björn Ekengren, Daniel Valfridsson, Uzi Landsmann,
+        Keijo Kurkinen, Anders Möllmark and Christer Sandberg.
+      </footer>
+    </main>
+  </body>
+</html>

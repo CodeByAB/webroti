@@ -1,0 +1,36 @@
+# Keeps the SHA-pinned actions and the npm dev tooling current, weekly, one
+# grouped PR per ecosystem. Commit subjects follow the repo format
+# (`build(deps): …`), which release-please leaves out of the changelog.
+# No major versions: those are done on purpose, as their own issue.
+# public/vendor/ is not covered — upgrade it by hand (README.md).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns: ['*']
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+    assignees: ['dvalfrid']
+    commit-message:
+      prefix: build
+      include: scope
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm:
+        patterns: ['*']
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+    assignees: ['dvalfrid']
+    commit-message:
+      prefix: build
+      include: scope

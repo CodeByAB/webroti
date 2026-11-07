@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm run check)",
+      "Bash(npm run lint)",
+      "Bash(npm run typecheck)",
+      "Bash(npm test)",
+      "Bash(npm run format)",
+      "WebFetch(domain:developers.cloudflare.com)",
+      "WebFetch(domain:developer.mozilla.org)",
+      "WebFetch(domain:github.com)"
+    ],
+    "deny": [
+      "Bash(npm run db:migrate:remote)",
+      "Bash(npx wrangler d1 migrations apply * --remote)",
+      "Bash(npx wrangler d1 execute * --remote *)",
+      "Bash(npx wrangler pages deploy)",
+      "Bash(npx wrangler pages deploy *)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/prettier-edited.cjs\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

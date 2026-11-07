@@ -1,6 +1,5 @@
-/target/
-/.idea/
-.classpath
-.project
-.settings/
-*.iml
+node_modules/
+.wrangler/
+.dev.vars
+*.log
+.DS_Store

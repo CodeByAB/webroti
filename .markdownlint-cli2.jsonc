@@ -1,0 +1,6 @@
+{
+  // Which Markdown files `npm run lint` checks. Rules are in .markdownlint.json.
+  "globs": ["**/*.md"],
+  // Skills and GitHub templates start with front matter or a section heading on purpose.
+  "ignores": ["node_modules/**", ".wrangler/**", "CHANGELOG.md", ".claude/skills/**", ".github/**"],
+}

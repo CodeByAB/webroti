@@ -1,0 +1,31 @@
+name: Bug report
+description: Something on Web-ROTI doesn't work as it should
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Create a meeting
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: e.g. Safari on iPhone 15, Firefox 140 on Windows
+  - type: textarea
+    id: console
+    attributes:
+      label: Errors in the browser console
+      description: Optional. Paste any red lines from the developer tools console.
+      render: text

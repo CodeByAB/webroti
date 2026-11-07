@@ -1,0 +1,19 @@
+{
+  // Type-checks the browser code. See ../../tsconfig.json for the server side.
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "strict": true,
+    "target": "es2023",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["es2023", "dom", "dom.iterable"],
+    "types": [],
+    "skipLibCheck": true,
+    "paths": {
+      "/vendor/*": ["../vendor/*"]
+    }
+  },
+  "include": ["."]
+}
