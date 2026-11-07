@@ -1,5 +1,5 @@
 # Cloudflare Pages project configuration. Read by `wrangler pages dev` locally
-# and by Cloudflare's Git-integrated builds (see README.md § Driftsättning).
+# and by `wrangler pages deploy` in .github/workflows/deploy.yml (docs/deploy.md).
 name = "webroti"
 pages_build_output_dir = "public"
 compatibility_date = "2026-11-01"
@@ -7,7 +7,7 @@ compatibility_date = "2026-11-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "webroti"
-# Replace with the id printed by `npx wrangler d1 create webroti` (README.md).
+# Replace with the id printed by `npx wrangler d1 create webroti` (docs/deploy.md).
 # Local development (`npm run dev`) uses a local SQLite file and ignores it.
 database_id = "00000000-0000-0000-0000-000000000000"
 migrations_dir = "migrations"

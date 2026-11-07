@@ -17,5 +17,6 @@ export default [
   },
   { files: ['public/js/**'], languageOptions: { globals: globals.browser } },
   { files: ['functions/**', 'lib/**'], languageOptions: { globals: globals.serviceworker } },
-  { files: ['test/**', '*.config.js'], languageOptions: { globals: globals.node } },
+  { files: ['test/**', 'tools/**', '*.config.js'], languageOptions: { globals: globals.node } },
+  { files: ['**/*.cjs'], languageOptions: { sourceType: 'commonjs', globals: globals.node } },
 ];

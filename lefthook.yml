@@ -1,0 +1,19 @@
+# Git hooks (installed by `npm ci` / `npm run setup`). Checks only — never
+# rewrites files behind your back; run `npm run format` to fix.
+pre-commit:
+  parallel: true
+  commands:
+    prettier:
+      glob: '*.{js,json,html,css,md,yml,yaml}'
+      run: npx prettier --check {staged_files}
+    eslint:
+      glob: '*.js'
+      run: npx eslint {staged_files}
+    markdownlint:
+      glob: '*.md'
+      run: npx markdownlint-cli2 {staged_files}
+
+commit-msg:
+  commands:
+    conventional:
+      run: node tools/check-commit-msg.js {1}

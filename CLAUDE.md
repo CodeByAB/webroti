@@ -1,186 +1,88 @@
 # CLAUDE.md
 
-Regler och kontext för AI-assistenter (Claude Code m.fl.) och för människor
-som kodar i repot. `AGENTS.md` pekar hit, så det här är den enda
-instruktionsfilen — håll den sann.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository. It is loaded in every session, so it holds only what applies every time — the map of the code is in [docs/architecture.md](docs/architecture.md), the coding rules in [STANDARDS.md](STANDARDS.md).
 
-## Projektet
+**Read [ROADMAP.md](ROADMAP.md) first in every session.** It is the project status, kept in the repo so it travels across machines and sessions.
 
-**Web-ROTI** (Return On Time Invested) mäter hur mycket ett möte var värt:
-någon skapar ett möte, alla deltagare röstar anonymt 1.0–5.0 (via länk,
-QR-kod eller genom att skicka runt en telefon) och mötessidan visar antal
-röster, medelvärde och min–max. Skapades 2013 på Diversify i Java/Jersey
-med jQuery och lagring i minnet; skrevs om från grunden 2026.
+## Skills (invoke with /name)
 
-Stacken är medvetet liten, samma mönster som SUHF och Gubbängens
-klädbyte:
+| Skill              | When to use                                                   |
+| ------------------ | ------------------------------------------------------------- |
+| `/commit-workflow` | Opening an issue, branching, committing, PR, roadmap sync     |
+| `/run-webroti`     | Starting the site locally and verifying a change in a browser |
 
-- **Cloudflare Pages** serverar `public/` (vanlig HTML/CSS/JS, inget
-  byggsteg, inget ramverk).
-- **Pages Functions** i `functions/api/` är API:t.
-- **Cloudflare D1** (SQLite) lagrar möten och röster. Schemat ligger i
-  `migrations/`.
-
-GitHub Pages räcker inte: sajten behöver ett API och en databas.
-
-**Läs `ROADMAP.md` först i varje session.** Uppdatera den när ett steg
-blir klart, startar eller blockeras.
-
-## Kommandon
+## Commands
 
 ```bash
-npm ci                 # installera utvecklingsverktygen (låsta versioner)
-npm run dev            # lokal D1-migrering + wrangler pages dev på http://localhost:8788
-npm run check          # allt nedan, kör före varje commit
-npm run lint           # ESLint + Prettier --check
-npm run typecheck      # tsc på JSDoc-typerna (server och webbläsare var för sig)
-npm test               # node --test, inkl. riktig SQL mot migreringarna
-npm run format         # Prettier --write
-npm run db:migrate:remote   # applicera nya migreringar i produktion (se README)
+npm ci                     # install the pinned dev tooling (also installs git hooks)
+npm run dev                # local D1 migrations + wrangler pages dev on http://localhost:8788
+npm run check              # lint + typecheck + tests — what CI runs
+npm run lint               # ESLint, Prettier --check, markdownlint
+npm run typecheck          # tsc over the JSDoc types (server and browser separately)
+npm test                   # node --test, incl. real SQL against migrations/
+npm run format             # Prettier --write
 ```
 
-Kräver Node.js ≥ 22.13 (testerna använder inbyggda `node:sqlite`).
-Lokal databas ligger i `.wrangler/` (gitignorerad); radera mappen för att
-börja om.
+Single test file: `node --test test/meetings.test.js`. Requires Node.js ≥ 22.13 (`.nvmrc`), because the tests use the built-in `node:sqlite`.
 
-## Arkitektur
+## After making code changes
 
+**Always run the relevant checks before declaring a task complete.**
+
+| Changed                                    | Run                                                                             |
+| ------------------------------------------ | ------------------------------------------------------------------------------- |
+| Any `.js`, `.json`, `.html`, `.css`, `.md` | `npm run lint` (a hook formats edited files with Prettier)                      |
+| `lib/`, `functions/`, `migrations/`        | `npm test` and `npm run typecheck`                                              |
+| Anything under `public/` that renders      | `/run-webroti`: click through in the browser, 390 px and desktop, empty console |
+| Unsure                                     | `npm run check`                                                                 |
+
+- Zero ESLint warnings or errors. Never add an `eslint-disable` without a comment saying why.
+- If formatting changed files, include them in the same commit.
+
+## Commit message format
+
+Mandatory — `release-please` parses commit subjects to generate `CHANGELOG.md` and the version, and the `commit-msg` hook rejects other shapes.
+
+```text
+<type>(<scope>): <subject>
+
+<optional body>
+
+Closes #N
 ```
-public/                    Statiska filer, serveras som de är
-  index.html               Startsida: skapa möte, eller ange mötes-kod
-  meeting.html             Resultat (?id=), röstlänk, QR-kod, uppdateras var 5:e s
-  vote.html                Röstning (?id=), reglage 1.0–5.0
-  404.html, favicon.svg, robots.txt
-  _headers                 Säkerhetshuvuden för statiska filer (Cloudflare-syntax)
-  css/main.css             All CSS, design-tokens i :root (se docs/design.md)
-  js/*.js                  ES-moduler, en per sida + api.js och qr.js
-  vendor/<paket>-<ver>/    Vendrade tredjepartsfiler (ingen CDN)
-functions/api/             Pages Functions = API:t (filnamn = route)
-  _middleware.js           Felhantering + säkerhetshuvuden för alla /api/*
-  meetings/index.js        POST /api/meetings
-  meetings/[id]/index.js   GET  /api/meetings/:id
-  meetings/[id]/votes.js   POST /api/meetings/:id/votes
-lib/                       Logik som functions importerar (ingen routing här)
-  meetings.js              Domänlogik och SQL
-  http.js                  JSON-svar, felmappning, body-läsning
-migrations/                D1-migreringar, NNNN_beskrivning.sql
-test/                      node:test; d1.js är en D1-attrapp över node:sqlite
-```
 
-### API-kontrakt
+- **type:** `feat`, `fix`, `perf`, `docs`, `refactor`, `test`, `build`, `ci`, `chore`, `style`. Only `feat`/`fix`/`perf` surface in the changelog.
+- **scope:** `api`, `db`, `meeting`, `vote`, `start`, `ui`, `deploy`, `deps`, `docs`. Optional but expected.
+- **subject:** imperative, lower-case start, no trailing period.
+- Breaking change to the API or page URLs: `feat!:` / `fix!:` or a `BREAKING CHANGE:` footer.
+- `Closes #N` when there is an issue.
 
-| Metod och väg                  | Body               | Svar                                                                                      |
-| ------------------------------ | ------------------ | ----------------------------------------------------------------------------------------- |
-| `POST /api/meetings`           | `{}`               | `201 { "id": "482913" }`                                                                  |
-| `GET /api/meetings/:id`        | –                  | `200 { "id", "votes", "average", "min", "max" }` (tal med en decimal, `null` utan röster) |
-| `POST /api/meetings/:id/votes` | `{ "value": 3.4 }` | `201 { "ok": true }`                                                                      |
+For the full issue → implement → test → commit → roadmap workflow, run `/commit-workflow`.
 
-Fel är alltid `{ "error": "meddelande" }` med 400 (ogiltig indata), 404
-(okänt/utgånget möte), 409 (kodkrock/max antal röster), 415 (inte
-`application/json`) eller 500. Ändras kontraktet: uppdatera tabellen,
-`public/js/api.js` och `test/api.test.js` i samma commit.
+## Design philosophy
 
-### Domänregler (avsiktliga, ändra inte av misstag)
+Prefer the simplest solution that solves the problem. The platform is enough for most things: the browser (ES modules, `<output>`, `<dialog>`, `fetch`, CSS custom properties) and the Workers runtime (`fetch`, `crypto`, D1). Before adding code, ask whether there is a direct approach that avoids it. A plan being written down is not a reason to follow it if a cleaner alternative is obvious.
 
-- **Mötes-koder** är sex siffror 100000–999999 från `crypto.getRandomValues`,
-  lätta att skriva av. Krock → ny kod (max 10 försök).
-- **Röster** lagras som heltal i tiondelar (3.4 → 34) så medelvärdet blir
-  exakt. Medel avrundas till en decimal (originalet gjorde också så).
-- **Flera röster från samma enhet är tillåtet** — att skicka runt en
-  telefon är huvudfallet. Lägg inte till "en röst per person" utan beslut.
-- Reglaget återställs till 3.0 efter varje röst så nästa person inte
-  påverkas av förra rösten.
-- **Gallring:** möten utan aktivitet i 90 dagar räknas som borta och
-  raderas (med röster, `ON DELETE CASCADE`) när nästa möte skapas. Pages
-  Functions har ingen cron. Läsning förnyar aktiviteten högst en gång per
-  dygn, så pollning inte skriver till databasen.
-- Max 1000 röster per möte.
-- Inga inloggningar, inga personuppgifter, inga cookies, ingen analys.
+There is **no CMS** and no build step: the few pages are hand-written HTML in `public/`. Don't add a framework, bundler, CMS or CSS toolkit.
 
-## Kodstandard
+## Evidence, not guesses
 
-- **Vanlig modern JavaScript (ES2023, ES-moduler)** överallt, inget
-  byggsteg. Typer skrivs som JSDoc och kontrolleras med `tsc`
-  (`// @ts-check` överst i varje fil under `functions/`, `lib/`,
-  `public/js/`). Ingen TypeScript-syntax i `.js`-filer.
-- **Prettier** äger formatering (`.prettierrc.json`: enkla citattecken,
-  120 tecken). **ESLint** (`eslint.config.js`) fångar buggar. Stäng inte av
-  regler inline utan en kommentar om varför.
-- `.editorconfig`: UTF-8, LF, 2 blanksteg.
-- Namn: `camelCase` för funktioner/variabler, `UPPER_SNAKE` för konstanter,
-  filnamn i `kebab-case` eller Cloudflares routing-format (`[id]`).
-  Kod, kommentarer, commit-meddelanden och UI-text på **engelska**;
-  dokumentationen (`*.md`) på **svenska**.
-- Kommentarer förklarar _varför_, inte _vad_. Varje fil börjar med en kort
-  kommentar om vad den är till för.
-- Domänlogik i `lib/`, inte i `functions/`. En function ska bara: validera
-  route/headers, anropa `lib/`, mappa fel med `domainErrorResponse`.
-- All SQL med bundna parametrar (`?1`, `.bind()`), aldrig
-  strängkonkatenering.
-- Frontend: hämta element med `id`, bygg DOM med `textContent` /
-  `createElement`. **Aldrig `innerHTML`** med data.
-- Små, fokuserade commits med beskrivande meddelande i imperativ
-  ("Add vote cap per meeting").
+The owner wants to know how sure you are — every time.
 
-### Tester
+- **Label every cause, diagnosis and "fixed" claim** as **verifierat** (verified — say what was observed: a test, a request and its response, a screenshot, a value read back from D1) or **hypotes** (hypothesis — say what would confirm or rule it out). Never present a hypothesis as the cause.
+- **"Fixed" means** the failure was reproduced, one thing was changed, and the failure was gone in the same scenario. Until then say "should fix — not yet verified" and name the check that would show it.
+- **When an earlier explanation turns out wrong,** say so plainly and retract it where it was stated.
 
-- Ny eller ändrad logik i `lib/` eller `functions/` kräver tester i
-  `test/`. Testerna kör migreringarna mot en riktig SQLite, så SQL-fel
-  fångas lokalt.
-- Ändrar du UI: kör `npm run dev` och klicka igenom skapa möte → rösta →
-  resultat i mobil- (390 px) och desktopbredd, ljust och mörkt läge, och
-  kontrollera att webbläsarkonsolen är tom (CSP-fel syns där).
+## Rules that apply every session
 
-## Säkerhetsregler
+1. **No new dependencies** — npm packages, vendored files, Cloudflare services or bindings — without explicit approval from the owner. Propose instead.
+2. **Never edit a migration that exists.** It may already have run in production. Add `migrations/NNNN_description.sql`, backwards compatible with the code that is live (`deploy.yml` migrates before it uploads).
+3. **Don't change the API contract, the domain rules or the security headers** ([docs/architecture.md](docs/architecture.md)) unless explicitly asked — and then say so in the commit body and your reply.
+4. **Strict CSP:** no inline `<script>`, no `style=""`, no external CDN, font or analytics. JavaScript goes in `public/js/`, third-party code in `public/vendor/<package>-<version>/`.
+5. **Never touch production:** no `--remote` D1 commands, no `wrangler pages deploy`, no edits to `database_id` or Cloudflare settings unless asked. Production changes only through `main` and `deploy.yml`.
+6. Work on a branch, never on `main`. PRs are squash-merged by the owner.
+7. Documentation is part of the change, in the same PR (see CONTRIBUTING.md § Documentation requirements). Don't mark anything in ROADMAP.md as done that hasn't been verified.
 
-- **CSP** (`public/_headers`) tillåter bara `'self'`: **inga inline-skript,
-  inga inline-styles (`style=""`), inga externa CDN:er, typsnitt eller
-  analysverktyg.** Tredjepartskod vendras i `public/vendor/<paket>-<version>/`
-  med licenshuvudet kvar och noteras i README.
-- `public/_headers` gäller inte Functions; API-huvuden sätts i
-  `functions/api/_middleware.js`.
-- Alla skrivande anrop kräver `Content-Type: application/json`. Det tvingar
-  fram en CORS-preflight som API:t aldrig besvarar = CSRF-skydd. Lägg
-  aldrig till `Access-Control-Allow-Origin` på API:t.
-- Validera all indata på servern (`parseVote`, `isMeetingId`); klientens
-  validering är bara bekvämlighet.
-- Interna fel loggas med `console.error` och svarar `500` utan detaljer.
-- **Inga hemligheter i repot.** Gamla `.travis.yml` innehöll en Heroku-
-  API-nyckel i klartext; den finns kvar i git-historiken (se ROADMAP).
+## Architecture in one paragraph
 
-## Regler för AI-assistenter
-
-1. Läs `ROADMAP.md` och den här filen innan du ändrar något.
-2. Kör `npm run check` innan varje commit; committa inte rött.
-3. **Inga nya beroenden** (npm-paket, vendrade filer, Cloudflare-tjänster)
-   utan att Daniel har bett om det eller godkänt det. Föreslå hellre.
-   Webbläsaren och Workers-runtimen räcker långt.
-4. **Ändra aldrig en migrering som redan finns** — den kan vara körd i
-   produktion. Skapa en ny `migrations/NNNN_….sql` och uppdatera
-   arkitekturavsnittet.
-5. Ändra inte domänreglerna ovan, API-kontraktet eller säkerhets-
-   huvudena utan att det är uttryckligen efterfrågat; nämn det i så fall
-   tydligt i commit och svar.
-6. Rör inte `wrangler.toml`s `database_id`, Cloudflare-inställningar eller
-   produktionsdatabasen (`--remote`) utan uttrycklig begäran.
-7. Arbeta på en egen branch, aldrig direkt på `main` (dokumentations-
-   ändringar undantagna). Pusha sällan — varje push bygger en preview.
-8. Dokumentationen är en del av ändringen (se nedan). Hitta inte på status
-   i ROADMAP; skriv bara det som är verifierat.
-9. Rapportera ärligt: säg vad som testats, hur, och vad som inte testats.
-
-## Dokumentation (krav)
-
-En ändring är inte klar förrän dokumenten beskriver det nya läget, i
-samma commit. Inaktuell dokumentation räknas som en bugg.
-
-| Dokument         | Läsare                  | Uppdatera när                                                      |
-| ---------------- | ----------------------- | ------------------------------------------------------------------ |
-| `ROADMAP.md`     | Alla, varje session     | Ett steg startar/blir klart/blockeras, ett beslut tas eller öppnas |
-| `CLAUDE.md`      | Kodsessioner            | Arkitektur, API, kommandon, regler eller konventioner ändras       |
-| `docs/design.md` | Kodsessioner            | Tokens, komponenter eller sidor ändras                             |
-| `README.md`      | Den som driftar         | Uppsättning, driftsättning eller drift ändras                      |
-| `SECURITY.md`    | Den som rapporterar fel | Hur säkerhetsfel tas emot ändras                                   |
-
-Innan du är klar: sök i dokumenten efter det du ändrat (sökvägar, namn,
-versioner, URL:er) och rätta varje inaktuell rad.
+Static pages in `public/` (start, meeting results, vote) call a small JSON API in `functions/api/` (Cloudflare Pages Functions), which keeps meetings and votes in Cloudflare D1 (SQLite). Domain logic and SQL live in `lib/`; a function only validates the route and headers, calls `lib/`, and maps errors. Details — endpoints, tables, domain rules, security model — in [docs/architecture.md](docs/architecture.md).

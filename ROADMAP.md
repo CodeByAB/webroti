@@ -1,75 +1,60 @@
 # Roadmap — Web-ROTI
 
-Status och nästa steg. Uppdateras i repot (inte i lokalt minne) så att den
-syns oavsett maskin eller session.
+Project status and next steps, kept in the repo so it is visible from any machine or session. Update it in the same PR as the work.
 
-## Nu / Next
+## Now / Next
 
-**Nu:** Omskrivningen är klar på branchen `claude/webroti-modernize-rebuild-ze5g88`:
-all funktionalitet från Java-versionen finns, `npm run check` är grönt
-och hela flödet är testat lokalt i webbläsare (`wrangler pages dev`).
-Inget är driftsatt ännu.
+**Now:** The rewrite (v2.0.0) is done on the branch `claude/webroti-modernize-rebuild-ze5g88`: every feature of the Java version is there, `npm run check` is green, and the whole flow has been verified in a browser against `wrangler pages dev` with a local D1 database. Nothing is deployed yet.
 
 **Next:**
 
-1. Daniel granskar branchen och mergar till `main`.
-2. Driftsätt enligt README § Driftsättning (D1-databas, Pages-projekt,
-   `database_id` i `wrangler.toml`).
-3. Bestäm domän (se öppna frågor).
+1. Review and merge the branch into `main`.
+2. Cloudflare setup per [docs/deploy.md](docs/deploy.md): D1 database, `database_id` in `wrangler.toml`, Pages project, API token and GitHub secrets.
+3. Decide the domain (open question below).
+4. Branch protection on `main` (require Verify, squash merge).
 
 ## Status
 
-### Omskrivning (2026-11)
+### Rewrite (2026-11) ✅
 
-- [x] Java/Jersey, Maven, Heroku-Procfile, Travis och jQuery/Bootstrap/
-      RequireJS borttagna
-- [x] API som Pages Functions: skapa möte, hämta resultat, rösta
-- [x] D1-schema (`migrations/0001_init.sql`), röster i tiondelar
-- [x] Gallring av möten efter 90 dagar utan aktivitet
-- [x] Max 1000 röster per möte, validering på servern, CSRF-skydd via
-      `Content-Type: application/json`
-- [x] Ny frontend utan ramverk: startsida (skapa möte / ange kod),
-      mötessida (statistik, QR-kod, kopiera länk, automatisk uppdatering),
-      röstsida (reglage, bekräftelse, återställning till 3.0)
-- [x] Strikt CSP (`'self'` only), säkerhetshuvuden, mörkt läge
-- [x] Google Analytics borttagen (ingen spårning, inga cookies)
-- [x] Kodstandard: ESLint, Prettier, JSDoc-typer med `tsc`, EditorConfig
-- [x] Tester: domänlogik och API-handlers mot riktig SQLite (19 tester)
-- [x] GitHub Actions (`check.yml`) och Dependabot
-- [x] CLAUDE.md (AI-regler och kodstandard), AGENTS.md, README, SECURITY,
-      docs/design.md
+- [x] Java/Jersey, Maven, Heroku Procfile, Travis CI and jQuery/Bootstrap/RequireJS removed
+- [x] API as Pages Functions: create meeting, get summary, vote
+- [x] D1 schema (`migrations/0001_init.sql`), votes stored as integer tenths
+- [x] Retention: meetings deleted 90 days after their last activity
+- [x] Max 1000 votes per meeting, server-side validation, CSRF protection via `Content-Type: application/json`
+- [x] New front end, no framework: start page (create meeting or enter code), meeting page (stats, QR code, copy link, live refresh), vote page (slider, confirmation, reset to 3.0)
+- [x] Strict CSP (`'self'` only), security headers, dark mode
+- [x] Google Analytics removed — no tracking, no cookies
+- [x] Code standard: ESLint, Prettier, markdownlint, JSDoc types checked by `tsc`, EditorConfig, lefthook pre-commit and commit-msg hooks
+- [x] Tests: domain logic and API handlers against real SQLite (19 tests)
+- [x] Governance as in RIGStats: CLAUDE.md, STANDARDS.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md, LICENSE (MIT), CODEOWNERS, issue and PR templates, `.claude/` hook and skills
+- [x] CI: Verify, Deploy, CodeQL, weekly audit, release-please, Dependabot — all actions SHA-pinned
 
-### Driftsättning
+### Deployment
 
-- [ ] D1-databas skapad och migrerad i Cloudflare
-- [ ] Pages-projekt kopplat till repot
-- [ ] Egen domän
-- [ ] Rate limiting-regel för `/api/*`
+- [ ] D1 database created and migrated
+- [ ] Pages project (Direct Upload) and GitHub secrets
+- [ ] First deploy from `main` verified
+- [ ] Custom domain
+- [ ] Rate-limiting rule for `/api/*`
+- [ ] Branch protection on `main`
 
-## Öppna frågor och beslut
+## Open questions
 
-- **Domän:** `webroti.com` användes förr — äger vi den fortfarande? Annars
-  t.ex. en subdomän. Den gamla kontaktadressen `contact@webroti.com` togs
-  bort från sajten tills vidare.
-- **Läckt Heroku-nyckel:** gamla `.travis.yml` innehöll en Heroku-API-
-  nyckel i klartext. Filen är borttagen men nyckeln finns i git-historiken.
-  Kontrollera att Heroku-kontot/nyckeln är avstängd (troligen sedan länge).
-- **Förhandsmiljöns databas:** previews delar D1-databas med produktion.
-  Alternativ: en separat `webroti-preview`-databas via `[env.preview]` i
-  `wrangler.toml`.
-- **Migreringar i CI:** köra `wrangler d1 migrations apply --remote` från
-  GitHub Actions (kräver Cloudflare-API-token som secret) i stället för
-  manuellt.
-- **Språk:** UI:t är på engelska som originalet. Svenska som tillval?
-- **Licens:** repot saknar licensfil.
-- Beslut 2026-11-07: Cloudflare Pages + D1 i stället för GitHub Pages,
-  eftersom sajten behöver API och lagring. Samma plattform som SUHF och
-  Gubbängens klädbyte.
-- Beslut 2026-11-07: mötes-koder är sex siffror (originalet: fem) eftersom
-  möten nu sparas i 90 dagar i stället för tills servern startade om.
+- **Domain:** `webroti.com` was used before — is it still ours? Otherwise a subdomain. The old address `contact@webroti.com` was removed from the site for now.
+- **Leaked Heroku key:** the old `.travis.yml` had a Heroku API key in plain text. The file is gone, but the key is in the git history. Confirm the key/account is revoked (probably long since).
+- **Licence:** MIT, copyright Daniel Valfridsson, as RIGStats. The 2013 code had no licence; the rewrite shares no code with it. Confirm.
+- **Language:** the UI is English, like the original. Swedish as an option?
 
-## Idéer (inte påbörjade)
+## Decisions
 
-- Fördelning av röster som stapeldiagram på mötessidan.
-- Möjlighet för skaparen att stänga röstningen.
-- Svensk översättning.
+- 2026-11-07: Cloudflare Pages + Functions + D1 rather than GitHub Pages, because the site needs an API and storage.
+- 2026-11-07: Deploy from GitHub Actions (Direct Upload) rather than Cloudflare's Git integration, so migrations run in the same pipeline and pull requests never get previews writing to the production database.
+- 2026-11-07: Governance, CI and documentation follow RIGStats; documentation in English. No CMS.
+- 2026-11-07: Six-digit meeting codes (the original had five), since meetings now live for 90 days instead of until the next restart.
+
+## Ideas (not started)
+
+- Vote distribution as a bar chart on the meeting page.
+- Let the meeting's creator close voting.
+- Swedish translation.

@@ -1,86 +1,45 @@
 # Web-ROTI
 
-Mät hur mycket dina möten är värda. Web-ROTI (Return On Time Invested)
-låter alla i ett möte betygsätta det anonymt från 1 till 5 och visar
-antal röster, medelvärde och min–max.
+**Measure the return on time invested in your meetings.** Everyone in the meeting rates it anonymously from 1 to 5; Web-ROTI shows the number of votes, the average and the min–max.
 
-1. Skapa ett möte på startsidan.
-2. Låt alla rösta — skicka runt en telefon, dela länken eller visa QR-koden.
-3. Följ resultatet på mötessidan (uppdateras automatiskt).
+1. Create a meeting.
+2. Let everyone vote — pass a phone around, share the link, or show the QR code.
+3. Watch the result on the meeting page; it updates by itself.
 
-Byggd på **Cloudflare Pages** (statiska filer i `public/`), **Pages
-Functions** (API:t i `functions/api/`) och **Cloudflare D1** (SQLite).
-Inget ramverk och inget byggsteg. Utvecklarregler, arkitektur och
-kodstandard finns i [`CLAUDE.md`](CLAUDE.md), status i
-[`ROADMAP.md`](ROADMAP.md).
+ROTI can be measured on a whiteboard, but voters who see each other's votes are biased. In Web-ROTI every vote is given blind.
 
-## Lokal utveckling
+## How it's built
 
-Kräver [Node.js](https://nodejs.org/) 22.13 eller senare.
+Plain HTML, CSS and JavaScript on **Cloudflare Pages**, a small JSON API as **Pages Functions**, and **Cloudflare D1** (SQLite) for storage. No framework, no build step, no CMS, no cookies, no tracking. See [docs/architecture.md](docs/architecture.md).
+
+## Development
+
+Requires [Node.js](https://nodejs.org/) 22.13 or later.
 
 ```bash
-npm ci          # installerar wrangler, eslint, prettier, typescript
-npm run dev     # http://localhost:8788 med lokal D1-databas
-npm run check   # lint + typkontroll + tester, kör före varje commit
+npm ci          # dev tooling + git hooks
+npm run dev     # http://localhost:8788 with a local D1 database
+npm run check   # lint + typecheck + tests
 ```
 
-Den lokala databasen ligger i `.wrangler/` och påverkar inte produktion.
+- [CONTRIBUTING.md](CONTRIBUTING.md) — workflow, commit convention, pull requests
+- [STANDARDS.md](STANDARDS.md) — code standards, including rules for AI-generated code
+- [CLAUDE.md](CLAUDE.md) — guidance for AI coding tools
+- [ROADMAP.md](ROADMAP.md) — status and next steps
+- [docs/deploy.md](docs/deploy.md) — Cloudflare setup and operations
 
-## Driftsättning (Cloudflare Pages)
+## Third-party code
 
-Görs en gång av den som äger Cloudflare-kontot.
+| File                                                                                                                            | Source                                                                      | Licence               |
+| ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------- |
+| `public/vendor/qrcode-generator-2.0.4/qrcode.js` (the package's `dist/qrcode.mjs`) and `qrcode.d.ts` (adapted to the ES module) | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) 2.0.4 | MIT, © Kazuhiko Arase |
 
-1. **Logga in:** `npx wrangler login`
-2. **Skapa databasen:** `npx wrangler d1 create webroti`. Kopiera
-   `database_id` som skrivs ut till `wrangler.toml` (ersätt nollorna) och
-   committa.
-3. **Skapa tabellerna:** `npm run db:migrate:remote`
-4. **Skapa Pages-projektet:** Cloudflare Dashboard → _Workers & Pages_ →
-   _Create_ → _Pages_ → _Connect to Git_ → välj `CodeByAB/webroti`.
-   - Production branch: `main`
-   - Framework preset: _None_
-   - Build command: _(tomt)_
-   - Build output directory: `public`
+To upgrade, add the new version in a new folder `public/vendor/qrcode-generator-<version>/`, change the import in `public/js/qr.js`, and remove the old folder.
 
-   D1-kopplingen (`DB`) läses från `wrangler.toml`; den ska inte läggas in
-   i dashboarden.
+## History
 
-5. **Egen domän:** projektet → _Custom domains_ → lägg till domänen.
-6. **Rekommenderat:** en _Rate limiting rule_ under domänens _Security →
-   WAF_ för `/api/*` (t.ex. 60 anrop/minut per IP) mot skräpröster.
+Web-ROTI was created in 2013 at Diversify by Kristoffer Richardsson, Björn Ekengren, Daniel Valfridsson, Uzi Landsmann, Keijo Kurkinen, Anders Möllmark and Christer Sandberg, as a Java service on Heroku. It was rewritten from scratch in 2026; the original code is in the git history.
 
-Därefter driftsätts varje push till `main` automatiskt, och varje annan
-branch får en förhandsadress `<branch>.webroti.pages.dev`.
+## Licence
 
-**Obs:** förhandsadresserna använder samma D1-databas som produktion
-(se ROADMAP).
-
-### Nya databasmigreringar
-
-Migreringar körs **inte** automatiskt vid deploy. När en branch med en ny
-fil i `migrations/` ska till `main`: kör `npm run db:migrate:remote`
-först (migreringar ska vara bakåtkompatibla med koden som redan är ute),
-merga sedan.
-
-## Drift
-
-- Möten utan aktivitet i 90 dagar raderas automatiskt.
-- Loggar: Cloudflare Dashboard → projektet → _Functions_ → _Real-time logs_.
-- Titta i databasen: `npx wrangler d1 execute webroti --remote --command "SELECT COUNT(*) FROM meetings"`.
-
-## Tredjepartskod
-
-| Fil                                                                  | Version                                                                     | Licens                |
-| -------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------- |
-| `public/vendor/qrcode-generator-2.0.4/qrcode.js` (från `qrcode.mjs`) | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) 2.0.4 | MIT, © Kazuhiko Arase |
-
-Uppgradera genom att lägga den nya versionen i en ny mapp
-`public/vendor/qrcode-generator-<version>/`, ändra importen i
-`public/js/qr.js` och ta bort den gamla mappen.
-
-## Historik
-
-Web-ROTI skapades 2013 på Diversify av Kristoffer Richardsson, Björn
-Ekengren, Daniel Valfridsson, Uzi Landsmann, Keijo Kurkinen, Anders
-Möllmark och Christer Sandberg, som en Java/Jersey-tjänst på Heroku. Den
-koden finns kvar i git-historiken (före omskrivningen 2026).
+[MIT](LICENSE)

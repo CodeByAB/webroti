@@ -1,44 +1,36 @@
 # Design
 
-Enkel, lugn och mobil först: sajten används oftast på en telefon som
-skickas runt i ett mötesrum. Allt ligger i `public/css/main.css`.
+Calm, simple and mobile first: the site is mostly used on a phone passed around a meeting room. Everything is in `public/css/main.css`.
 
 ## Tokens
 
-Alla färger, avstånd och radier är CSS custom properties i `:root`.
-Använd dem i stället för hårdkodade värden. Mörkt läge följer
-`prefers-color-scheme` och byter bara tokenvärden.
+Colours, spacing and radii are CSS custom properties in `:root`. Use them instead of literal values. Dark mode follows `prefers-color-scheme` and only changes token values.
 
-| Token                            | Ljust                   | Mörkt     | Används till                        |
-| -------------------------------- | ----------------------- | --------- | ----------------------------------- |
-| `--color-primary`                | `#1f6f5c`               | `#4fb79a` | Knappar, länkar, reglage, fokusring |
-| `--color-bg`                     | `#f3f5f4`               | `#121715` | Sidbakgrund, statistikrutor         |
-| `--color-surface`                | `#ffffff`               | `#1b2220` | Kortet                              |
-| `--color-text` / `--color-muted` |                         |           | Brödtext / sekundär text            |
-| `--color-error`                  | `#b3261e`               | `#ff8a80` | Felmeddelanden                      |
-| `--space-1…4`                    | 0.5 / 1 / 1.5 / 2.5 rem |           | Avstånd                             |
-| `--tap-size`                     | 3rem                    |           | Minsta höjd på klickbara element    |
+| Token                            | Light                   | Dark                  | Used for                            |
+| -------------------------------- | ----------------------- | --------------------- | ----------------------------------- |
+| `--color-primary`                | `#1f6f5c`               | `#4fb79a`             | Buttons, links, slider, focus ring  |
+| `--color-bg`                     | `#f3f5f4`               | `#121715`             | Page background, stat boxes         |
+| `--color-surface`                | `#ffffff`               | `#1b2220`             | The card                            |
+| `--color-text` / `--color-muted` | `#1d2422` / `#5b6662`   | `#e6ecea` / `#a3b0ab` | Body / secondary text               |
+| `--color-error`                  | `#b3261e`               | `#ff8a80`             | Error messages                      |
+| `--space-1…4`                    | 0.5 / 1 / 1.5 / 2.5 rem |                       | Spacing                             |
+| `--tap-size`                     | 3rem                    |                       | Minimum height of anything tappable |
 
-Typsnitt: systemtypsnittet (`system-ui`), siffror med
-`tabular-nums`, mötes-koder i monospace. Inga webbtypsnitt.
+Type: the system font stack (`system-ui`), `tabular-nums` for figures, monospace for meeting codes. No web fonts.
 
-## Komponenter
+## Components
 
-- `.card` — sidans enda behållare, max 40rem bred.
-- `.button`, `.button--primary` (helbredd, fylld), `.button--small`.
-- `.status`, `.status--success`, `.status--error` — meddelanden med
-  `role="status"`/`role="alert"`.
-- `.stats` / `.stats__item` — tre rutor på mötessidan, får inte radbrytas
-  på 320 px bredd.
-- `.vote-value` + `.slider` — det stora talet och det inbyggda reglaget
-  (`accent-color`).
-- `.qr` — QR-koden som SVG.
-- `.visually-hidden` — text bara för skärmläsare.
+- `.card` — the single container on every page, at most 40rem wide.
+- `.button`, `.button--primary` (full width, filled), `.button--small`.
+- `.status`, `.status--success`, `.status--error` — messages, with `role="status"` or `role="alert"`.
+- `.join`, `.join__row` — the meeting-code form on the start page.
+- `.stats`, `.stats__item` — the three boxes on the meeting page; must not wrap at 320 px.
+- `.vote-value` + `.slider` — the big number and the native range input (`accent-color`).
+- `.qr` — the QR code as SVG; `.share` — link and copy button.
+- `.visually-hidden` — text for screen readers only.
 
-Nya klasser följer formen `.block`, `.block__element`, `.block--modifier`.
+New classes follow `.block`, `.block__element`, `.block--modifier`.
 
-## Tillgänglighet
+## Checking a UI change
 
-- Allt går att använda med tangentbord; synlig fokusring (`:focus-visible`).
-- Formulärfält har `label`, levande värden har `aria-live`.
-- Kontrollera kontrast (WCAG AA) när färger ändras, i båda lägena.
+Look at the changed pages at 390 px and 1280 px, in light and dark mode, and keep the browser console empty (CSP violations show there). `/run-webroti` describes how. Check contrast (WCAG AA) whenever a colour changes.

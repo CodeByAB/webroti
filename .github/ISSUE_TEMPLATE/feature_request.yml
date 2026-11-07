@@ -1,0 +1,17 @@
+name: Feature request
+description: Suggest an improvement to Web-ROTI
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: What should change, from the point of view of someone running or attending a meeting?
+    validations:
+      required: true
