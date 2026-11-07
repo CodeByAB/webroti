@@ -19,6 +19,29 @@ Done once by whoever owns the Cloudflare account. Steps 1–4 run locally after 
 
 Merge the branch from step 2 — the first deploy runs.
 
+## GitHub repository settings
+
+Repository metadata and settings aren't stored in git, so they are listed here. Keep them in sync with the README.
+
+**About** (gear icon on the repository page):
+
+- **Description:** `Measure the return on time invested (ROTI) in your meetings — anonymous 1–5 votes, average and min–max. Cloudflare Pages + D1, no framework.`
+- **Website:** the production URL (`https://webroti.pages.dev` until a custom domain is set)
+- **Topics:** `roti`, `meetings`, `meeting-feedback`, `retrospective`, `voting`, `cloudflare-pages`, `cloudflare-d1`, `cloudflare-workers`, `javascript`, `vanilla-js`
+- Keep _Releases_ ticked (release-please publishes them); _Packages_ can be unticked.
+
+**Settings → General:**
+
+- **Default branch:** `main` (rename `master`; GitHub redirects old links). Workflows, release-please and Dependabot target `main`.
+- **Features:** Wiki off (documentation lives in the repo), Issues on, Discussions off.
+- **Pull Requests:** allow squash merging only, default message _Pull request title_; _Automatically delete head branches_ on.
+
+**Settings → Actions → General:** _Workflow permissions_ read-only by default, and tick _Allow GitHub Actions to create and approve pull requests_ — release-please needs it to open the release PR.
+
+**Settings → Advanced Security:** private vulnerability reporting on (SECURITY.md links to it), Dependabot alerts and security updates on, secret scanning and push protection on. Leave CodeQL _default setup_ off — `codeql.yml` is the advanced setup.
+
+**Branches / tags:** delete stale branches that predate the rewrite (`develop`, `clojure`, `feature/Issue#10`, `gh-pages`) and the old tag `DeployToHerokuNowWorks`. Releases from v2.0.0 on are tagged `v<version>` by release-please.
+
 ## New migrations
 
 Add a new file in `migrations/`; never edit an existing one. `deploy.yml` applies it **before** uploading the new code, so it must work with the code that is live (add a column with a default, don't rename or drop in the same release). To try it locally: `npm run db:migrate:local`.

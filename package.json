@@ -1,7 +1,27 @@
 {
   "name": "webroti",
+  "version": "1.0.0",
   "private": true,
-  "description": "Web-ROTI — measure the Return On Time Invested in your meetings",
+  "description": "Measure the return on time invested (ROTI) in your meetings — anonymous 1–5 votes, average and min–max, on Cloudflare Pages + D1",
+  "keywords": [
+    "roti",
+    "meetings",
+    "retrospective",
+    "feedback",
+    "voting",
+    "cloudflare-pages",
+    "cloudflare-d1"
+  ],
+  "homepage": "https://github.com/CodeByAB/webroti#readme",
+  "bugs": {
+    "url": "https://github.com/CodeByAB/webroti/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeByAB/webroti.git"
+  },
+  "license": "MIT",
+  "author": "Daniel Valfridsson",
   "type": "module",
   "engines": {
     "node": ">=22.13"
@@ -28,7 +48,5 @@
     "prettier": "3.9.10",
     "typescript": "7.0.2",
     "wrangler": "4.158.0"
-  },
-  "version": "2.0.0",
-  "license": "MIT"
+  }
 }

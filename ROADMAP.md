@@ -11,7 +11,8 @@ Project status and next steps, kept in the repo so it is visible from any machin
 1. Review and merge the branch into `master`, then rename `master` to `main` (GitHub → _Settings → Branches_; old links redirect). Workflows, release-please and Dependabot target `main`. Delete the stale `develop`, `clojure`, `feature/Issue#10` and `gh-pages` branches if no longer needed.
 2. Cloudflare setup per [docs/deploy.md](docs/deploy.md): D1 database, `database_id` in `wrangler.toml`, Pages project, API token and GitHub secrets.
 3. Decide the domain (open question below).
-4. Branch protection on `main` (require Verify, squash merge).
+4. GitHub repository settings per [docs/deploy.md § GitHub repository settings](docs/deploy.md#github-repository-settings): description, website, topics, default branch, merge and Actions settings, security features, stale branches and tag.
+5. Merge the release-please PR that follows, to publish v2.0.0.
 
 ## Status
 
@@ -38,6 +39,8 @@ Project status and next steps, kept in the repo so it is visible from any machin
 - [ ] Custom domain
 - [ ] Rate-limiting rule for `/api/*`
 - [ ] Branch protection on `main`
+- [ ] Repository description, website and topics set
+- [ ] v2.0.0 released by release-please
 
 ## Open questions
 
@@ -51,6 +54,7 @@ Project status and next steps, kept in the repo so it is visible from any machin
 - 2026-11-07: Cloudflare Pages + Functions + D1 rather than GitHub Pages, because the site needs an API and storage.
 - 2026-11-07: Deploy from GitHub Actions (Direct Upload) rather than Cloudflare's Git integration, so migrations run in the same pipeline and pull requests never get previews writing to the production database.
 - 2026-11-07: Governance, CI and documentation follow RIGStats; documentation in English. No CMS.
+- 2026-11-07: Versioning starts at v2.0.0 for the rewrite (the release-please manifest starts at 1.0.0, so the breaking `feat!` commit produces 2.0.0). Tags are `v<version>`.
 - 2026-11-07: Six-digit meeting codes (the original had five), since meetings now live for 90 days instead of until the next restart.
 
 ## Ideas (not started)
